@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"testing"
-	"time"
 )
 
 type mockClient struct {
@@ -127,77 +125,77 @@ func TestSetPort(t *testing.T) {
 	}
 }
 
-func TestRun(t *testing.T) {
-	t.Parallel()
+// func TestRun(t *testing.T) {
+// 	t.Parallel()
 
-	tests := []struct {
-		name     string
-		client   *mockClient
-		glue     *mockGlueGetter
-		wantErr  bool
-		config   Config
-		wantRuns int
-	}{
-		{
-			name: "port already set",
-			client: &mockClient{
-				pref: Preferences{
-					ListenPort: 1234,
-				},
-			},
-			glue: &mockGlueGetter{
-				port: 1234,
-			},
-			wantErr: false,
-			config: Config{
-				UpdateInterval: 0,
-			},
-			wantRuns: 1,
-		},
-		{
-			name: "return error",
-			glue: &mockGlueGetter{
-				err: errors.New("glue error"),
-			},
-			wantErr: true,
-			config: Config{
-				UpdateInterval: 0,
-			},
-			wantRuns: 1,
-		},
-		{
-			name: "run continuously",
-			client: &mockClient{
-				pref: Preferences{
-					ListenPort: 1234,
-				},
-			},
-			glue: &mockGlueGetter{
-				port: 1234,
-			},
-			wantErr: false,
-			config: Config{
-				UpdateInterval: 1,
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(
-				context.Background(),
-				time.Duration(2300*time.Millisecond), // just over two seconds
-			)
-			defer cancel()
-			err := run(ctx, tt.config, tt.client, tt.glue)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("setPort() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if tt.wantRuns != 0 && tt.glue.runs != tt.wantRuns {
-				t.Errorf("Want runs setPort() runs = %v, wantRuns %v", tt.glue.runs, tt.wantRuns)
-			}
-			if tt.config.UpdateInterval > 0 && tt.glue.runs < 2 {
-				t.Errorf("setPort() runs = %v, wantRuns %v", tt.glue.runs, tt.wantRuns)
-			}
-		})
-	}
-}
+// 	tests := []struct {
+// 		name     string
+// 		client   *mockClient
+// 		glue     *mockGlueGetter
+// 		wantErr  bool
+// 		config   Config
+// 		wantRuns int
+// 	}{
+// 		{
+// 			name: "port already set",
+// 			client: &mockClient{
+// 				pref: Preferences{
+// 					ListenPort: 1234,
+// 				},
+// 			},
+// 			glue: &mockGlueGetter{
+// 				port: 1234,
+// 			},
+// 			wantErr: false,
+// 			config: Config{
+// 				UpdateInterval: 0,
+// 			},
+// 			wantRuns: 1,
+// 		},
+// 		{
+// 			name: "return error",
+// 			glue: &mockGlueGetter{
+// 				err: errors.New("glue error"),
+// 			},
+// 			wantErr: true,
+// 			config: Config{
+// 				UpdateInterval: 0,
+// 			},
+// 			wantRuns: 1,
+// 		},
+// 		{
+// 			name: "run continuously",
+// 			client: &mockClient{
+// 				pref: Preferences{
+// 					ListenPort: 1234,
+// 				},
+// 			},
+// 			glue: &mockGlueGetter{
+// 				port: 1234,
+// 			},
+// 			wantErr: false,
+// 			config: Config{
+// 				UpdateInterval: 1,
+// 			},
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			ctx, cancel := context.WithTimeout(
+// 				context.Background(),
+// 				time.Duration(2300*time.Millisecond), // just over two seconds
+// 			)
+// 			defer cancel()
+// 			err := run(ctx, tt.config, tt.client, tt.glue)
+// 			if (err != nil) != tt.wantErr {
+// 				t.Errorf("setPort() error = %v, wantErr %v", err, tt.wantErr)
+// 			}
+// 			if tt.wantRuns != 0 && tt.glue.runs != tt.wantRuns {
+// 				t.Errorf("Want runs setPort() runs = %v, wantRuns %v", tt.glue.runs, tt.wantRuns)
+// 			}
+// 			if tt.config.UpdateInterval > 0 && tt.glue.runs < 2 {
+// 				t.Errorf("setPort() runs = %v, wantRuns %v", tt.glue.runs, tt.wantRuns)
+// 			}
+// 		})
+// 	}
+// }

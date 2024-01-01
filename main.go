@@ -9,7 +9,10 @@ import (
 	"time"
 )
 
-const loginAttempts = 10
+// remove login from client creation, add login function, and re-login on error
+// https://github.com/qdm12/gluetun/issues/1407#issuecomment-1461582887
+
+const loginAttempts = 20
 const loginDelay = 10 * time.Second
 
 type HttpDoer interface {
@@ -53,8 +56,9 @@ func setPort(config Config, client Preferencer, glue GlueGetter) error {
 }
 
 // run runs the program in a loop.
-func run(ctx context.Context, config Config, client Preferencer, glue GlueGetter) error {
+func run(ctx context.Context, config Config, glue GlueGetter) error {
 	for {
+		client := getQbitClient(config)
 		err := setPort(config, client, glue)
 		if err != nil {
 			slog.Warn("Failed to set port: ", err)
@@ -89,6 +93,6 @@ func getQbitClient(config Config) *Client {
 
 func main() {
 	config := loadConfig()
-	client := getQbitClient(config)
-	run(context.Background(), config, client, glueGetter{})
+	// client := getQbitClient(config)
+	run(context.Background(), config, glueGetter{})
 }

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -143,7 +142,6 @@ func (c *Client) GetPreferences() (Preferences, error) {
 		return prefs, err
 	}
 	err = json.Unmarshal(b, &prefs)
-	log.Println(prefs)
 	return prefs, err
 }
 
